@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture - mcp-server-kubernetes</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b0c0b;color:#f5f2eb;font-family:'SF Mono','Fira Code','Cascadia Code',Consolas,monospace;line-height:1.6;padding:0}
+a{color:#c8420a;text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+h1{font-size:2rem;color:#f5f2eb;margin-bottom:0.5rem}
+h2{font-size:1.4rem;color:#c8420a;margin:2rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid #222}
+h3{font-size:1.1rem;color:#f5f2eb;margin:1.5rem 0 0.75rem}
+.badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:4px;font-size:0.8rem;font-weight:600;margin-right:0.5rem;margin-bottom:0.5rem}
+.badge-lang{background:#1a3a1a;color:#4ade80;border:1px solid #2d5a2d}
+.badge-cat{background:#1a1a3a;color:#60a5fa;border:1px solid #2d2d5a}
+.badge-ver{background:#3a1a1a;color:#f87171;border:1px solid #5a2d2d}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0}
+.card{background:#141514;border:1px solid #222;border-radius:8px;padding:1.25rem;text-align:center}
+.card-value{font-size:1.5rem;color:#c8420a;font-weight:700}
+.card-label{font-size:0.8rem;color:#888;margin-top:0.25rem}
+.arch-diagram{background:#101210;border:1px solid #222;border-radius:8px;padding:2rem;margin:1rem 0;overflow-x:auto}
+.flow-row{display:flex;justify-content:center;align-items:center;gap:0.5rem;margin:0.75rem 0;flex-wrap:wrap}
+.flow-box{background:#1a1a2e;border:2px solid #c8420a;border-radius:6px;padding:0.5rem 1rem;font-size:0.8rem;text-align:center;min-width:120px;color:#f5f2eb}
+.flow-box.accent{background:#c8420a;color:#fff;border-color:#e8520a}
+.flow-box.blue{border-color:#1982c4;background:#0f1f3a}
+.flow-box.green{border-color:#2b9348;background:#0f2a1a}
+.flow-box.purple{border-color:#533483;background:#1a0f2e}
+.flow-arrow{color:#c8420a;font-size:1.2rem;font-weight:bold}
+.flow-arrow-down{display:flex;justify-content:center;color:#c8420a;font-size:1.2rem;font-weight:bold}
+.flow-label{font-size:0.7rem;color:#888;display:block}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.85rem}
+th{background:#1a1a1a;color:#c8420a;padding:0.75rem;text-align:left;border-bottom:2px solid #333;white-space:nowrap}
+td{padding:0.75rem;border-bottom:1px solid #1a1a1a}
+tr:hover{background:#141514}
+code{background:#1a1a1a;padding:0.15rem 0.4rem;border-radius:3px;font-size:0.85rem;color:#e8a060}
+.checklist{list-style:none;padding:0}
+.checklist li{padding:0.4rem 0;padding-left:1.5rem;position:relative}
+.checklist li::before{content:'[ ]';position:absolute;left:0;color:#c8420a;font-weight:bold}
+.section-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem}
+.section-box{background:#141514;border:1px solid #222;border-radius:8px;padding:1.25rem}
+.section-box h3{margin-top:0}
+footer{margin-top:3rem;padding:1.5rem 0;border-top:1px solid #222;text-align:center;font-size:0.75rem;color:#555}
+.env-table td:first-child{color:#4ade80}
+.header-bar{background:#141514;border-bottom:1px solid #222;padding:1.5rem 0}
+.header-bar .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.industry-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.industry-card{background:#141514;border:1px solid #222;border-radius:8px;padding:1rem}
+.industry-card h4{color:#c8420a;margin-bottom:0.5rem;font-size:0.95rem}
+.industry-card p{font-size:0.8rem;color:#aaa}
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+<div class="container">
+<div>
+<h1>mcp-server-kubernetes</h1>
+<p style="color:#888;margin-top:0.25rem">MCP server for Kubernetes cluster operations -- pods, deployments, services, namespaces, events, and manifests</p>
+</div>
+<div>
+<span class="badge badge-lang">TypeScript 5.3+</span>
+<span class="badge badge-cat">MCP Server</span>
+<span class="badge badge-ver">v1.0.0</span>
+</div>
+</div>
+</div>
+
+<div class="container">
+
+<h2>Executive Summary</h2>
+<p>An MCP (Model Context Protocol) server that provides AI assistants with comprehensive Kubernetes cluster management capabilities. Built with the official Kubernetes client-node library and MCP SDK, it exposes eight tools for listing pods, deployments, and services, retrieving pod logs, applying manifests, listing namespaces, getting cluster events, and scaling deployments. The server uses kubeconfig or in-cluster authentication and communicates via stdio transport for integration with Claude Desktop and other MCP clients.</p>
+
+<h2>Overview</h2>
+<div class="cards">
+<div class="card"><div class="card-value">TypeScript</div><div class="card-label">Language</div></div>
+<div class="card"><div class="card-value">MCP Server</div><div class="card-label">Category</div></div>
+<div class="card"><div class="card-value">8</div><div class="card-label">Tools</div></div>
+<div class="card"><div class="card-value">5</div><div class="card-label">K8s Resource Types</div></div>
+<div class="card"><div class="card-value">4</div><div class="card-label">Dependencies</div></div>
+<div class="card"><div class="card-value">MIT</div><div class="card-label">License</div></div>
+</div>
+
+<h2>Architecture Diagram</h2>
+<div class="arch-diagram">
+<div class="flow-row">
+<div class="flow-box accent">MCP Client<br><span class="flow-label">Claude Desktop / AI Assistant</span></div>
+</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box blue">stdio Transport<br><span class="flow-label">JSON-RPC over stdin/stdout</span></div>
+</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box accent">MCP Server Entry<br><span class="flow-label">src/index.ts</span></div>
+<div class="flow-arrow">&lt;--&gt;</div>
+<div class="flow-box purple">Kube Config Loader<br><span class="flow-label">src/kube.ts</span></div>
+</div>
+<div class="flow-label" style="text-align:center">Tool Dispatch Layer</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box green">list_pods<br><span class="flow-label">Core v1</span></div>
+<div class="flow-box blue">list_deployments<br><span class="flow-label">Apps v1</span></div>
+<div class="flow-box purple">list_services<br><span class="flow-label">Core v1</span></div>
+<div class="flow-box green">get_pod_logs<br><span class="flow-label">Core v1</span></div>
+</div>
+<div class="flow-row">
+<div class="flow-box blue">apply_manifest<br><span class="flow-label">Dynamic</span></div>
+<div class="flow-box purple">list_namespaces<br><span class="flow-label">Core v1</span></div>
+<div class="flow-box green">get_events<br><span class="flow-label">Core v1</span></div>
+<div class="flow-box blue">scale_deployment<br><span class="flow-label">Apps v1</span></div>
+</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box accent">Kubernetes API Server<br><span class="flow-label">Cluster Control Plane</span></div>
+</div>
+<div class="flow-arrow-down">v</div>
+<div class="flow-row">
+<div class="flow-box green">Pods</div>
+<div class="flow-box blue">Deployments</div>
+<div class="flow-box purple">Services</div>
+<div class="flow-box green">Namespaces</div>
+<div class="flow-box blue">Events</div>
+</div>
+</div>
+
+<h2>Component Breakdown</h2>
+<table>
+<thead><tr><th>Component</th><th>File</th><th>Purpose</th><th>Key Dependencies</th></tr></thead>
+<tbody>
+<tr><td>Server Entry</td><td><code>src/index.ts</code></td><td>MCP server initialization, tool registration, stdio transport</td><td>@modelcontextprotocol/sdk</td></tr>
+<tr><td>Kube Config</td><td><code>src/kube.ts</code></td><td>Kubernetes client configuration (kubeconfig or in-cluster)</td><td>@kubernetes/client-node</td></tr>
+<tr><td>List Pods</td><td><code>src/tools/list_pods.ts</code></td><td>List pods with namespace and label selector filtering</td><td>CoreV1Api</td></tr>
+<tr><td>List Deployments</td><td><code>src/tools/list_deployments.ts</code></td><td>List deployments with optional namespace filtering</td><td>AppsV1Api</td></tr>
+<tr><td>List Services</td><td><code>src/tools/list_services.ts</code></td><td>List services with optional namespace filtering</td><td>CoreV1Api</td></tr>
+<tr><td>Get Pod Logs</td><td><code>src/tools/get_pod_logs.ts</code></td><td>Retrieve pod logs with container and tail line options</td><td>CoreV1Api</td></tr>
+<tr><td>Apply Manifest</td><td><code>src/tools/apply_manifest.ts</code></td><td>Apply a YAML manifest to the cluster</td><td>KubernetesObjectApi, yaml</td></tr>
+<tr><td>List Namespaces</td><td><code>src/tools/list_namespaces.ts</code></td><td>List all namespaces in the cluster</td><td>CoreV1Api</td></tr>
+<tr><td>Get Events</td><td><code>src/tools/get_events.ts</code></td><td>Get cluster events with optional namespace filtering</td><td>CoreV1Api</td></tr>
+<tr><td>Scale Deployment</td><td><code>src/tools/scale_deployment.ts</code></td><td>Scale a deployment to a specified replica count</td><td>AppsV1Api</td></tr>
+</tbody>
+</table>
+
+<h2>Data Flow / Request Flow</h2>
+<div class="section-box">
+<ol style="padding-left:1.5rem;color:#ccc">
+<li><strong>Client Request</strong> -- An MCP client sends a JSON-RPC tool invocation over stdio with tool name and parameters.</li>
+<li><strong>Parameter Validation</strong> -- Parameters are validated using Zod schemas specific to each tool.</li>
+<li><strong>Kube Auth</strong> -- The kube config loader resolves authentication from kubeconfig file or in-cluster service account.</li>
+<li><strong>API Call</strong> -- The tool handler uses the Kubernetes client-node library to call the cluster API server.</li>
+<li><strong>Response Formatting</strong> -- Kubernetes API responses are serialized and returned to the MCP client as structured content.</li>
+</ol>
+</div>
+
+<h2>Security Controls</h2>
+<table>
+<thead><tr><th>Control</th><th>Implementation</th></tr></thead>
+<tbody>
+<tr><td>Authentication</td><td>Kubeconfig file or in-cluster service account token</td></tr>
+<tr><td>RBAC</td><td>Kubernetes RBAC controls which resources the service account can access</td></tr>
+<tr><td>Input Validation</td><td>Zod schema validation on all tool parameters; YAML parsing for manifests</td></tr>
+<tr><td>Transport Security</td><td>TLS for Kubernetes API server communication; stdio for local MCP transport</td></tr>
+<tr><td>Namespace Isolation</td><td>Tools support namespace filtering to restrict operations</td></tr>
+<tr><td>Manifest Validation</td><td>YAML manifests are parsed and validated before application</td></tr>
+</tbody>
+</table>
+
+<h2>Industry Adaptation</h2>
+<div class="industry-grid">
+<div class="industry-card"><h4>Healthcare</h4><p>Monitor HIPAA-compliant workloads on AKS/EKS/GKE, scale healthcare applications, retrieve pod logs for compliance auditing.</p></div>
+<div class="industry-card"><h4>Finance</h4><p>Manage PCI-DSS scoped Kubernetes workloads, monitor deployment status for financial applications, audit cluster events.</p></div>
+<div class="industry-card"><h4>DevOps</h4><p>Deployment management, pod troubleshooting via logs, manifest application for GitOps workflows, auto-scaling operations.</p></div>
+<div class="industry-card"><h4>Platform Engineering</h4><p>Multi-cluster management, namespace provisioning, event monitoring for platform health, deployment scaling for capacity management.</p></div>
+</div>
+
+<h2>Production Readiness Checklist</h2>
+<ul class="checklist">
+<li>Configure kubeconfig or in-cluster service account with minimum RBAC permissions</li>
+<li>Build TypeScript to JavaScript (<code>npm run build</code>)</li>
+<li>Test all eight tools against target Kubernetes cluster</li>
+<li>Configure MCP client with server entry point</li>
+<li>Set up Kubernetes audit logging for API access tracking</li>
+<li>Create dedicated service account with namespace-scoped RBAC</li>
+<li>Deploy as Docker container or in-cluster pod</li>
+<li>Monitor Kubernetes API server audit logs</li>
+</ul>
+
+<h2>Configuration / Environment Variables</h2>
+<table class="env-table">
+<thead><tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>KUBECONFIG</code></td><td>No</td><td>~/.kube/config</td><td>Path to kubeconfig file (auto-detected in-cluster)</td></tr>
+</tbody>
+</table>
+
+<h2>Deployment</h2>
+<div class="section-grid">
+<div class="section-box">
+<h3>Local Development</h3>
+<pre><code>git clone https://github.com/kogunlowo123/mcp-server-kubernetes.git
+cd mcp-server-kubernetes
+npm install
+npm run build
+npm start</code></pre>
+</div>
+<div class="section-box">
+<h3>Docker / Production</h3>
+<pre><code>docker build -t mcp-server-kubernetes .
+docker run \
+  -v ~/.kube/config:/root/.kube/config:ro \
+  mcp-server-kubernetes</code></pre>
+</div>
+</div>
+
+<h2>Links</h2>
+<table>
+<tbody>
+<tr><td>Repository</td><td><a href="https://github.com/kogunlowo123/mcp-server-kubernetes">github.com/kogunlowo123/mcp-server-kubernetes</a></td></tr>
+<tr><td>README</td><td><a href="../README.md">README.md</a></td></tr>
+<tr><td>Changelog</td><td><a href="../CHANGELOG.md">CHANGELOG.md</a></td></tr>
+<tr><td>License</td><td><a href="../LICENSE">MIT License</a></td></tr>
+</tbody>
+</table>
+
+<footer>
+Generated on 2026-03-15 | mcp-server-kubernetes v1.0.0 | Architecture Documentation
+</footer>
+
+</div>
+</body>
+</html>
