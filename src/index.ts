@@ -18,72 +18,72 @@ const server = new McpServer({
 server.tool(
   "list_pods",
   "List pods in a Kubernetes namespace with optional label selector filter",
-  listPodsSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await listPods(input) }],
+  listPodsSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await listPods(input) }],
   })
 );
 
 server.tool(
   "list_deployments",
   "List deployments in a Kubernetes namespace",
-  listDeploymentsSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await listDeployments(input) }],
+  listDeploymentsSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await listDeployments(input) }],
   })
 );
 
 server.tool(
   "list_services",
   "List services in a Kubernetes namespace",
-  listServicesSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await listServices(input) }],
+  listServicesSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await listServices(input) }],
   })
 );
 
 server.tool(
   "get_pod_logs",
   "Get logs from a pod, optionally specifying container and tail line count",
-  getPodLogsSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await getPodLogs(input) }],
+  getPodLogsSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await getPodLogs(input) }],
   })
 );
 
 server.tool(
   "apply_manifest",
   "Apply a Kubernetes manifest (YAML) to the cluster, creating or updating resources",
-  applyManifestSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await applyManifest(input) }],
+  applyManifestSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await applyManifest(input) }],
   })
 );
 
 server.tool(
   "list_namespaces",
   "List all namespaces in the Kubernetes cluster",
-  listNamespacesSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await listNamespaces(input) }],
+  listNamespacesSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await listNamespaces(input) }],
   })
 );
 
 server.tool(
   "get_events",
   "Get Kubernetes events, optionally filtered by namespace",
-  getEventsSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await getEvents(input) }],
+  getEventsSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await getEvents(input) }],
   })
 );
 
 server.tool(
   "scale_deployment",
   "Scale a Kubernetes deployment to a specified number of replicas",
-  scaleDeploymentSchema.shape,
-  async (input) => ({
-    content: [{ type: "text", text: await scaleDeployment(input) }],
+  scaleDeploymentSchema.shape as any,
+  async (input: any) => ({
+    content: [{ type: "text" as const, text: await scaleDeployment(input) }],
   })
 );
 
