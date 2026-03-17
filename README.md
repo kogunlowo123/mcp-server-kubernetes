@@ -1,3 +1,7 @@
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?logo=typescript&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+![GitHub release](https://img.shields.io/github/v/release/kogunlowo123/mcp-server-kubernetes)
+
 # mcp-server-kubernetes
 
 An MCP (Model Context Protocol) server that provides tools for interacting with Kubernetes clusters, including pods, deployments, services, namespaces, events, and manifest management.
